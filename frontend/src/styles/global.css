@@ -354,10 +354,17 @@ a {
   gap: 16px;
   align-items: center;
   padding: 16px;
-  margin-top: 12px;
+  margin-top: 14px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: #ffffff;
+}
+
+.preview-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 .preview-card.active {
@@ -383,6 +390,7 @@ a {
 }
 
 .preview-card small {
+  display: block;
   color: var(--muted);
   font-weight: 600;
 }

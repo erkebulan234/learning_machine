@@ -41,7 +41,7 @@ const submitTask = async (req, res) => {
 
     if (alreadyCompleted) {
       const { rows } = await pool.query(
-        `SELECT id, username, xp, level
+        `SELECT id, username, xp, level, role
         FROM users
         WHERE id = $1`,
         [user_id]
@@ -56,7 +56,7 @@ const submitTask = async (req, res) => {
             ),
             updated_at = NOW()
         WHERE id = $2
-        RETURNING id, username, xp, level`,
+        RETURNING id, username, xp, level, role`,
         [task.xp_reward, user_id]
       );
       updated = rows;
