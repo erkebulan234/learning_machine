@@ -101,6 +101,27 @@ http://localhost:3000
 - профиль пользователя;
 - админ-панель для создания курсов, уроков и заданий.
 
+## Основные API endpoints
+
+- `POST /api/auth/register` — регистрация пользователя
+- `POST /api/auth/login` — вход пользователя
+- `GET /api/auth/me` — данные текущего пользователя
+- `GET /api/courses` — список курсов
+- `GET /api/courses/:id` — курс и его уроки
+- `POST /api/courses` — создание курса, только admin
+- `PUT /api/courses/:id` — обновление курса, только admin
+- `DELETE /api/courses/:id` — удаление курса, только admin
+- `GET /api/lessons/:id` — урок и задания
+- `POST /api/lessons` — создание урока, только admin
+- `PUT /api/lessons/:id` — обновление урока, только admin
+- `DELETE /api/lessons/:id` — удаление урока, только admin
+- `GET /api/tasks/:id` — данные задания
+- `POST /api/tasks` — создание задания, только admin
+- `POST /api/tasks/:id/submit` — отправка решения
+- `GET /api/users/profile` — профиль пользователя
+- `GET /api/achievements` — список достижений
+- `GET /api/achievements/my` — достижения текущего пользователя
+
 ## Роли пользователей
 
 По умолчанию новые пользователи создаются с ролью:
