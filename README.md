@@ -13,6 +13,7 @@ Learning Machine — веб-приложение для прохождения �
 
 ```text
  backend/
+  .env.example
   database/
     schema.sql
   src/
@@ -40,7 +41,7 @@ psql -U postgres -d learning_machine -f backend/database/schema.sql
 Создайте файл:
 
 ```text
-backend/src/.env
+backend/.env
 ```
 
 Пример содержимого:
