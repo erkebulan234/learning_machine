@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 

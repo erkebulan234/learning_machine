@@ -7,7 +7,6 @@ export default function AdminPage() {
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
-  const [stats, setStats] = useState({ courses: 0, lessons: 0, tasks: 0 });
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
 
@@ -15,7 +14,6 @@ export default function AdminPage() {
     if (!isAdmin) { navigate('/courses'); return; }
     api.get('/courses').then(({ data }) => {
       setCourses(data.courses);
-      setStats(s => ({ ...s, courses: data.courses.length }));
     }).finally(() => setLoading(false));
   }, [isAdmin, navigate]);
 
