@@ -13,6 +13,7 @@ import CreateCoursePage  from './pages/CreateCoursePage';
 import CreateLessonPage  from './pages/CreateLessonPage';
 import CreateTaskPage    from './pages/CreateTaskPage';
 import AdminPage from './pages/AdminPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/courses"  element={<PrivateRoute><CoursesPage /></PrivateRoute>} />
@@ -30,7 +32,7 @@ function App() {
           <Route path="/courses/:courseId/lessons/new" element={<PrivateRoute><CreateLessonPage /></PrivateRoute>} />
           <Route path="/lessons/:lessonId/tasks/new" element={<PrivateRoute><CreateTaskPage /></PrivateRoute>} />
           <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
-          <Route path="*"         element={<Navigate to="/courses" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
