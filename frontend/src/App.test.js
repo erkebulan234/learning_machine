@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('redirects unauthenticated users to login page', () => {
+  localStorage.clear();
+  window.history.pushState({}, '', '/courses');
+
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(screen.getByRole('heading', { name: /вход/i })).toBeInTheDocument();
 });
