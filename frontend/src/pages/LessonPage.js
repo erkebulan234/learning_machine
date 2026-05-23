@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Check, Trophy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -57,7 +58,10 @@ export default function LessonPage() {
 
   return (
   <div className="page">
-    <Link to={`/courses/${lesson.course_id}`} className="back-link">← Назад к курсу</Link>
+    <Link to={`/courses/${lesson.course_id}`} className="back-link">
+      <ArrowLeft size={18} />
+      Назад к курсу
+    </Link>
     <h1>{lesson.title}</h1>
     <p className="lesson-content">{lesson.content}</p>
 
@@ -80,7 +84,8 @@ export default function LessonPage() {
                 className={`task-tab ${activeTask?.id === task.id ? 'active' : ''}`}
                 onClick={() => { setActiveTask(task); setCode(''); setResult(null); }}
               >
-                {task.completed ? '✓ ' : ''}Задание {i + 1}
+                {task.completed && <Check size={16} />}
+                Задание {i + 1}
               </button>
             ))}
           </div>
@@ -110,12 +115,17 @@ export default function LessonPage() {
 
               {result && !result.error && (
                 <div className="result-success">
-                  <strong>✓ Принято!</strong> +{result.xp_earned} XP
+                  <strong>
+                    <Check size={18} />
+                    Принято!
+                  </strong>
+                  +{result.xp_earned} XP
                   {result.new_achievements?.length > 0 && (
                     <div className="achievements-earned">
                       {result.new_achievements.map(a => (
                         <div key={a.id} className="achievement-badge">
-                          🏆 {a.title}
+                          <Trophy size={18} />
+                          {a.title}
                         </div>
                       ))}
                     </div>

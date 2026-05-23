@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { BookOpen, Plus, Eye, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -37,8 +38,14 @@ export default function AdminPage() {
       <aside className="admin-sidebar">
         <div className="admin-sidebar-title">⚙ Админ-панель</div>
         <nav className="admin-nav">
-          <a href="#courses" className="admin-nav-item active">📚 Курсы</a>
-          <Link to="/courses/new" className="admin-nav-item">➕ Новый курс</Link>
+          <a href="#courses" className="admin-nav-item active">
+          <BookOpen size={18} />
+          Курсы
+        </a>
+        <Link to="/courses/new" className="admin-nav-item">
+          <Plus size={18} />
+          Новый курс
+        </Link>
         </nav>
       </aside>
 
@@ -89,13 +96,20 @@ export default function AdminPage() {
                     <td>{course.lessons_count}</td>
                     <td>{new Date(course.created_at).toLocaleDateString('ru-RU')}</td>
                     <td className="table-actions">
-                      <Link to={`/courses/${course.id}`} className="action-btn view">👁</Link>
-                      <Link to={`/courses/${course.id}/lessons/new`} className="action-btn add">➕</Link>
+                      <Link to={`/courses/${course.id}`} className="action-btn view" aria-label="Открыть курс">
+                        <Eye size={18} />
+                      </Link>
+                      <Link to={`/courses/${course.id}/lessons/new`} className="action-btn add" aria-label="Добавить урок">
+                        <Plus size={18} />
+                      </Link>
                       <button
                         className="action-btn delete"
                         onClick={() => deleteCourse(course.id)}
                         disabled={deleting === course.id}
-                      >🗑</button>
+                        aria-label="Удалить курс"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))}

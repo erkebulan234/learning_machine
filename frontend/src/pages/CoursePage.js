@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-
+  
 export default function CoursePage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -26,7 +27,10 @@ export default function CoursePage() {
   
   return (
     <div className="page">
-      <Link to="/courses" className="back-link">← Все курсы</Link>
+      <Link to="/courses" className="back-link">
+        <ArrowLeft size={18} />
+        Все курсы
+      </Link>
       <h1>{course.title}</h1>
       <p className="course-desc">{course.description}</p>
       <div className="lessons-list">
@@ -46,7 +50,9 @@ export default function CoursePage() {
                 <div className="lesson-title">{lesson.title}</div>
                 <div className="lesson-meta">{lesson.tasks_count} заданий</div>
               </div>
-              <span className="lesson-arrow">→</span>
+              <span className="lesson-arrow">
+                <ArrowRight size={18} />
+              </span>
             </Link>
           ))
         )}

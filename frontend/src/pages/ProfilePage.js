@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Trophy } from 'lucide-react';
 import api from '../api/axios';
 
 export default function ProfilePage() {
@@ -52,7 +53,7 @@ export default function ProfilePage() {
           <div className="achievements-grid">
             {achievements.map(a => (
               <div key={a.id} className="achievement-card">
-                <div className="achievement-icon">🏆</div>
+                <div className="achievement-icon"><Trophy size={32} /></div>
                 <div className="achievement-title">{a.title}</div>
                 <div className="achievement-desc">{a.description}</div>
               </div>
