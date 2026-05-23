@@ -28,10 +28,10 @@ function App() {
           <Route path="/courses/:id" element={<PrivateRoute><CoursePage /></PrivateRoute>} />
           <Route path="/lessons/:id" element={<PrivateRoute><LessonPage /></PrivateRoute>} />
           <Route path="/profile"  element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-          <Route path="/courses/new" element={<PrivateRoute><CreateCoursePage /></PrivateRoute>} />
-          <Route path="/courses/:courseId/lessons/new" element={<PrivateRoute><CreateLessonPage /></PrivateRoute>} />
-          <Route path="/lessons/:lessonId/tasks/new" element={<PrivateRoute><CreateTaskPage /></PrivateRoute>} />
-          <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
+          <Route path="/courses/new" element={<PrivateRoute adminOnly><CreateCoursePage /></PrivateRoute>} />
+          <Route path="/courses/:courseId/lessons/new" element={<PrivateRoute adminOnly><CreateLessonPage /></PrivateRoute>} />
+          <Route path="/lessons/:lessonId/tasks/new" element={<PrivateRoute adminOnly><CreateTaskPage /></PrivateRoute>} />
+          <Route path="/admin" element={<PrivateRoute adminOnly><AdminPage /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

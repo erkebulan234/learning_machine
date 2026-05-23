@@ -32,11 +32,11 @@ const getProfile = async (req, res) => {
 
     // Достижения
     const { rows: achievements } = await pool.query(
-      `SELECT a.title, a.description, ua.unlocked_at
-       FROM user_achievements ua
-       JOIN achievements a ON a.id = ua.achievement_id
-       WHERE ua.user_id = $1
-       ORDER BY ua.unlocked_at DESC`,
+      `SELECT a.id, a.title, a.description, ua.unlocked_at
+      FROM user_achievements ua
+      JOIN achievements a ON a.id = ua.achievement_id
+      WHERE ua.user_id = $1
+      ORDER BY ua.unlocked_at DESC`,
       [req.user.id]
     );
 

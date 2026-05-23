@@ -52,7 +52,7 @@ export default function CoursesPage() {
                   <p>{course.description}</p>
                   <div className="course-footer">
                     <span>{course.lessons_count} уроков</span>
-                    <span>Открыть →</span>
+                    <span>Открыть</span>
                   </div>
                 </Link>
               ))}

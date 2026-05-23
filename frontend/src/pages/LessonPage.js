@@ -32,6 +32,17 @@ export default function LessonPage() {
     setResult(null);
     try {
       const { data } = await api.post(`/tasks/${activeTask.id}/submit`, { code });
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === activeTask.id ? { ...task, completed: true } : task
+        )
+      );
+
+      setActiveTask((currentTask) =>
+        currentTask ? { ...currentTask, completed: true } : currentTask
+      );
+
       setResult(data);
       updateUser(data.user);
     } catch (err) {
@@ -69,7 +80,7 @@ export default function LessonPage() {
                 className={`task-tab ${activeTask?.id === task.id ? 'active' : ''}`}
                 onClick={() => { setActiveTask(task); setCode(''); setResult(null); }}
               >
-                Задание {i + 1}
+                {task.completed ? '✓ ' : ''}Задание {i + 1}
               </button>
             ))}
           </div>
@@ -78,7 +89,9 @@ export default function LessonPage() {
             <div className="task-panel">
               <h3>{activeTask.title}</h3>
               <p className="task-desc">{activeTask.description}</p>
-              <div className="xp-badge">+{activeTask.xp_reward} XP</div>
+              <div className="xp-badge">
+                {activeTask.completed ? 'Выполнено' : `+${activeTask.xp_reward} XP`}
+              </div>
               <textarea
                 className="code-editor"
                 value={code}

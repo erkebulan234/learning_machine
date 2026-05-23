@@ -89,6 +89,10 @@ CREATE TABLE IF NOT EXISTS submissions (
   submitted_at TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_submissions_completed_once
+ON submissions(user_id, task_id)
+WHERE status = 'completed';
+
 -- ============================================================
 --  8. USER_PROGRESS
 -- ============================================================
@@ -163,6 +167,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO lessons (id, course_id, title, content, sort_order) VALUES
   (
     '22222222-2222-2222-2222-222222222222',
+    '11111111-1111-1111-1111-111111111111',
     'Переменные и типы данных',
     'В этом уроке рассматриваются переменные, строки, числа и логические значения в JavaScript.',
     1
@@ -172,6 +177,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO tasks (id, lesson_id, title, description, xp_reward) VALUES
   (
     '33333333-3333-3333-3333-333333333333',
+    '22222222-2222-2222-2222-222222222222',
     'Создать переменную',
     'Напишите код, который создает переменную name и записывает в нее ваше имя.',
     50

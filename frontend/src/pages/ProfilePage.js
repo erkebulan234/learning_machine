@@ -16,7 +16,7 @@ export default function ProfilePage() {
   if (!profile) return <div className="page">Ошибка загрузки</div>;
 
   const { user: u, progress, achievements } = profile;
-  const xpPercent = u.next_xp ? Math.round((u.xp / u.next_xp) * 100) : 100;
+  const xpPercent = u.next_xp ? Math.min(Math.round((u.xp / u.next_xp) * 100), 100) : 100;
 
   return (
     <div className="page">

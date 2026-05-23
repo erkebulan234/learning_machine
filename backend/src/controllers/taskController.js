@@ -7,6 +7,10 @@ const submitTask = async (req, res) => {
     const { code } = req.body;
     const user_id = req.user.id;
 
+    if (!code || !code.trim()) {
+      return res.status(400).json({ error: 'Код решения обязателен' });
+    }
+
     const { rows: taskRows } = await pool.query(
       'SELECT * FROM tasks WHERE id = $1', [task_id]
     );
@@ -15,23 +19,48 @@ const submitTask = async (req, res) => {
 
     const task = taskRows[0];
 
-    const { rows: sub } = await pool.query(
-      `INSERT INTO submissions (user_id, task_id, code, status, score)
-       VALUES ($1, $2, $3, 'completed', $4) RETURNING *`,
-      [user_id, task_id, code, task.xp_reward]
+    const { rows: existingCompleted } = await pool.query(
+      `SELECT id FROM submissions
+      WHERE user_id = $1 AND task_id = $2 AND status = 'completed'
+      LIMIT 1`,
+      [user_id, task_id]
     );
 
-    const { rows: updated } = await pool.query(
-      `UPDATE users
-       SET xp = xp + $1,
-           level = (
-             SELECT MAX(l.level) FROM levels l WHERE l.xp_required <= users.xp + $1
-           ),
-           updated_at = NOW()
-       WHERE id = $2
-       RETURNING id, username, xp, level`,
-      [task.xp_reward, user_id]
+    const alreadyCompleted = existingCompleted.length > 0;
+    const xpEarned = alreadyCompleted ? 0 : task.xp_reward;
+
+    const submissionStatus = alreadyCompleted ? 'reviewed' : 'completed';
+
+    const { rows: sub } = await pool.query(
+      `INSERT INTO submissions (user_id, task_id, code, status, score)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [user_id, task_id, code, submissionStatus, xpEarned]
     );
+
+    let updated;
+
+    if (alreadyCompleted) {
+      const { rows } = await pool.query(
+        `SELECT id, username, xp, level
+        FROM users
+        WHERE id = $1`,
+        [user_id]
+      );
+      updated = rows;
+    } else {
+      const { rows } = await pool.query(
+        `UPDATE users
+        SET xp = xp + $1,
+            level = (
+              SELECT MAX(l.level) FROM levels l WHERE l.xp_required <= users.xp + $1
+            ),
+            updated_at = NOW()
+        WHERE id = $2
+        RETURNING id, username, xp, level`,
+        [task.xp_reward, user_id]
+      );
+      updated = rows;
+    }
 
     const { rows: allTasks } = await pool.query(
       'SELECT id FROM tasks WHERE lesson_id = $1', [task.lesson_id]
@@ -57,7 +86,7 @@ const submitTask = async (req, res) => {
 
     res.json({
       submission: sub[0],
-      xp_earned: task.xp_reward,
+      xp_earned: xpEarned,
       user: updated[0],
       new_achievements: newAchievements,
     });

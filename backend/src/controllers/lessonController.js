@@ -17,10 +17,22 @@ const getLessonById = async (req, res) => {
       return res.status(404).json({ error: 'Урок не найден' });
 
     const { rows: tasks } = await pool.query(
-      `SELECT id, title, description, xp_reward
-       FROM tasks WHERE lesson_id = $1
-       ORDER BY created_at ASC`,
-      [id]
+      `SELECT
+        t.id,
+        t.title,
+        t.description,
+        t.xp_reward,
+        EXISTS (
+          SELECT 1
+          FROM submissions s
+          WHERE s.task_id = t.id
+            AND s.user_id = $2
+            AND s.status = 'completed'
+        ) AS completed
+      FROM tasks t
+      WHERE t.lesson_id = $1
+      ORDER BY t.created_at ASC`,
+      [id, req.user?.id || null]
     );
 
     // Прогресс текущего юзера если авторизован
