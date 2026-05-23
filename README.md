@@ -119,6 +119,13 @@ WHERE email = 'admin@example.com';
 
 ## Проверка проекта
 
+Frontend тесты:
+
+```bash
+cd frontend
+npm test -- --watchAll=false --runInBand
+```
+
 Сборка frontend:
 
 ```bash
