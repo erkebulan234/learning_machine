@@ -1184,3 +1184,66 @@ body {
     flex-direction: column;
   }
 }
+
+/* Final UI polish */
+.navbar-links a:focus,
+.navbar-links a:focus-visible,
+.btn-logout:focus,
+.btn-logout:focus-visible,
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.18);
+  outline-offset: 3px;
+}
+
+.navbar-links a:active {
+  outline: none;
+}
+
+.page {
+  max-width: 1040px;
+}
+
+.course-desc,
+.lesson-content {
+  max-width: 720px;
+}
+
+.lessons-list,
+.tasks-section,
+.section {
+  padding: 1.5rem;
+}
+
+.task-panel {
+  padding: 1.5rem 2rem;
+}
+
+.code-editor {
+  min-height: 220px;
+  max-height: 360px;
+}
+
+.course-card {
+  min-height: 170px;
+}
+
+.admin-main {
+  padding-top: 2.5rem;
+}
+
+.profile-card {
+  max-width: 100%;
+}
+
+@media (min-width: 1200px) {
+  .page {
+    max-width: 1060px;
+  }
+
+  .tasks-section {
+    max-width: 980px;
+  }
+}
