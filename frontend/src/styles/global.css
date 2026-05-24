@@ -903,8 +903,16 @@ a {
   display: block;
 }
 
-.task-tab {
-  display: inline-flex;
+.task-meta-row {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
+
+.task-meta-row .xp-badge {
+  min-height: 34px;
+}
+

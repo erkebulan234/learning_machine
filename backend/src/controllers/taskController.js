@@ -211,4 +211,52 @@ const createTask = async (req, res) => {
   }
 };
 
-module.exports = { getTaskById, createTask, submitTask };
+const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      check_variable_name,
+      check_value_type,
+      check_expected_value,
+      xp_reward,
+    } = req.body;
+
+    if (!title || !check_variable_name) {
+      return res.status(400).json({ error: 'title и check_variable_name обязательны' });
+    }
+
+    const { rows } = await pool.query(
+      `UPDATE tasks
+       SET title = $1,
+           description = $2,
+           check_variable_name = $3,
+           check_value_type = $4,
+           check_expected_value = $5,
+           xp_reward = $6
+       WHERE id = $7
+       RETURNING *`,
+      [
+        title,
+        description || null,
+        check_variable_name,
+        check_value_type || null,
+        check_expected_value ?? null,
+        xp_reward ?? 10,
+        id,
+      ]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Задание не найдено' });
+    }
+
+    res.json({ task: rows[0] });
+  } catch (err) {
+    console.error('updateTask error:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+};
+
+module.exports = { getTaskById, createTask, updateTask, submitTask };

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, Trophy } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { ArrowLeft, Check, Pencil, Trophy } from 'lucide-react';import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
 export default function LessonPage() {
@@ -94,8 +93,21 @@ export default function LessonPage() {
             <div className="task-panel">
               <h3>{activeTask.title}</h3>
               <p className="task-desc">{activeTask.description}</p>
-              <div className="xp-badge">
-                {activeTask.completed ? 'Выполнено' : `+${activeTask.xp_reward} XP`}
+              <div className="task-meta-row">
+                <div className="xp-badge">
+                  {activeTask.completed ? 'Выполнено' : `+${activeTask.xp_reward} XP`}
+                </div>
+
+                {isAdmin && (
+                  <button
+                    type="button"
+                    className="btn-secondary task-edit-btn"
+                    onClick={() => navigate(`/tasks/${activeTask.id}/edit`)}
+                  >
+                    <Pencil size={16} />
+                    Редактировать задание
+                  </button>
+                )}
               </div>
               <textarea
                 className="code-editor"

@@ -31,6 +31,7 @@ function App() {
           <Route path="/courses/new" element={<PrivateRoute adminOnly><CreateCoursePage /></PrivateRoute>} />
           <Route path="/courses/:courseId/lessons/new" element={<PrivateRoute adminOnly><CreateLessonPage /></PrivateRoute>} />
           <Route path="/lessons/:lessonId/tasks/new" element={<PrivateRoute adminOnly><CreateTaskPage /></PrivateRoute>} />
+          <Route path="/tasks/:taskId/edit" element={<PrivateRoute adminOnly><CreateTaskPage /></PrivateRoute>} />
           <Route path="/admin" element={<PrivateRoute adminOnly><AdminPage /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

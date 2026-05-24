@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
 
 export default function CreateTaskPage() {
-  const { lessonId } = useParams();
+  const { lessonId, taskId } = useParams();
+  const isEditing = Boolean(taskId);
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -14,7 +15,29 @@ export default function CreateTaskPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [returnLessonId, setReturnLessonId] = useState(lessonId || null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isEditing) return;
+
+    api.get(`/tasks/${taskId}`)
+      .then(({ data }) => {
+        const task = data.task;
+        setReturnLessonId(task.lesson_id);
+        setForm({
+          title: task.title || '',
+          description: task.description || '',
+          check_variable_name: task.check_variable_name || '',
+          check_value_type: task.check_value_type || 'string',
+          check_expected_value: task.check_expected_value || '',
+          xp_reward: task.xp_reward || 10,
+        });
+      })
+      .catch((err) => {
+        setError(err.response?.data?.error || 'Ошибка загрузки задания');
+      });
+  }, [isEditing, taskId]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -23,8 +46,20 @@ export default function CreateTaskPage() {
     setError('');
     setLoading(true);
     try {
-      await api.post('/tasks', { ...form, lesson_id: lessonId, xp_reward: Number(form.xp_reward) });
-      navigate(`/lessons/${lessonId}`);
+      if (isEditing) {
+        const { data } = await api.put(`/tasks/${taskId}`, {
+          ...form,
+          xp_reward: Number(form.xp_reward),
+        });
+        navigate(`/lessons/${data.task.lesson_id}`);
+      } else {
+        await api.post('/tasks', {
+          ...form,
+          lesson_id: lessonId,
+          xp_reward: Number(form.xp_reward),
+        });
+        navigate(`/lessons/${lessonId}`);
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Ошибка создания');
     } finally {
@@ -34,7 +69,7 @@ export default function CreateTaskPage() {
 
   return (
     <div className="page">
-      <h1>Новое задание</h1>
+      <h1>{isEditing ? 'Редактировать задание' : 'Новое задание'}</h1>
       <div className="form-card">
         {error && <div className="error-msg">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -84,9 +119,15 @@ export default function CreateTaskPage() {
             <input type="number" name="xp_reward" value={form.xp_reward} onChange={handleChange} min={1} max={500} />
           </div>
           <div className="form-actions">
-            <button type="button" className="btn-secondary" onClick={() => navigate(`/lessons/${lessonId}`)}>Отмена</button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => navigate(`/lessons/${returnLessonId || lessonId}`)}
+            >
+              Отмена
+            </button>
             <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? 'Создаём...' : 'Создать задание'}
+             {loading ? 'Сохраняем...' : isEditing ? 'Сохранить' : 'Создать задание'}
             </button>
           </div>
         </form>
