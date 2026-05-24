@@ -71,9 +71,12 @@ CREATE TABLE IF NOT EXISTS tasks (
   id          UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
   lesson_id   UUID        NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
   title       VARCHAR(255) NOT NULL,
-  description TEXT,
-  xp_reward   INT          NOT NULL DEFAULT 0,
-  created_at  TIMESTAMP    NOT NULL DEFAULT NOW()
+  description          TEXT,
+  check_variable_name  VARCHAR(100),
+  check_value_type     VARCHAR(50),
+  check_expected_value TEXT,
+  xp_reward            INT          NOT NULL DEFAULT 0,
+  created_at           TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
 -- ============================================================
@@ -174,12 +177,16 @@ INSERT INTO lessons (id, course_id, title, content, sort_order) VALUES
   )
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO tasks (id, lesson_id, title, description, xp_reward) VALUES
-  (
+INSERT INTO tasks (id, lesson_id, title, description, check_variable_name, check_value_type, check_expected_value, xp_reward) VALUES  (
     '33333333-3333-3333-3333-333333333333',
     '22222222-2222-2222-2222-222222222222',
     'Создать переменную',
     'Напишите код, который создает переменную name и записывает в нее ваше имя.',
+    'name',
+    'string',
+    '',
+    50
+  )
     50
   )
 ON CONFLICT (id) DO NOTHING;

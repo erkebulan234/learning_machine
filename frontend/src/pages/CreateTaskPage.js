@@ -4,7 +4,14 @@ import api from '../api/axios';
 
 export default function CreateTaskPage() {
   const { lessonId } = useParams();
-  const [form, setForm] = useState({ title: '', description: '', xp_reward: 10 });
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    check_variable_name: '',
+    check_value_type: 'string',
+    check_expected_value: '',
+    xp_reward: 10,
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -38,6 +45,39 @@ export default function CreateTaskPage() {
           <div className="form-group">
             <label>Описание</label>
             <textarea name="description" value={form.description} onChange={handleChange} placeholder="Что нужно сделать..." rows={4} />
+          </div>
+          <div className="form-group">
+            <label>Имя переменной</label>
+            <input
+              name="check_variable_name"
+              value={form.check_variable_name}
+              onChange={handleChange}
+              placeholder="Например: name"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Тип значения</label>
+            <select
+              name="check_value_type"
+              value={form.check_value_type}
+              onChange={handleChange}
+            >
+              <option value="string">Строка</option>
+              <option value="number">Число</option>
+              <option value="boolean">Логическое значение</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Ожидаемое значение</label>
+            <input
+              name="check_expected_value"
+              value={form.check_expected_value}
+              onChange={handleChange}
+              placeholder="Например: Erkebulan"
+            />
           </div>
           <div className="form-group">
             <label>Награда XP</label>

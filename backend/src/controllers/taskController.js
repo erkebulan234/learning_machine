@@ -1,3 +1,4 @@
+const vm = require('vm');
 const pool = require('../config/db');
 const { checkAndAwardAchievements } = require('../services/achievementService');
 
@@ -18,6 +19,61 @@ const submitTask = async (req, res) => {
       return res.status(404).json({ error: 'Задание не найдено' });
 
     const task = taskRows[0];
+
+    if (!task.check_variable_name?.trim()) {
+      return res.status(400).json({ error: 'Для задания не настроена проверка' });
+    }
+
+    try {
+      const variableName = task.check_variable_name;
+
+      if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(variableName)) {
+        throw new Error('Некорректное имя переменной в проверке');
+      }
+
+      const sandbox = {};
+      vm.createContext(sandbox);
+
+      vm.runInContext(
+        `${code}
+    globalThis.__checkedValue = ${variableName};`,
+        sandbox,
+        { timeout: 1000 }
+      );
+
+      const actualValue = sandbox.__checkedValue;
+
+      if (typeof actualValue === 'undefined') {
+        throw new Error(`Переменная ${variableName} не объявлена`);
+      }
+
+      if (task.check_value_type && typeof actualValue !== task.check_value_type) {
+        throw new Error(`Переменная ${variableName} должна иметь тип ${task.check_value_type}`);
+      }
+
+      const expectedValue = task.check_expected_value;
+
+      if (expectedValue !== null && expectedValue !== '') {
+        const normalizedActual = String(actualValue);
+        const normalizedExpected = String(expectedValue);
+
+        if (normalizedActual !== normalizedExpected) {
+          throw new Error(`Переменная ${variableName} должна быть равна ${normalizedExpected}`);
+        }
+      }
+    } catch (testError) {
+      const { rows: sub } = await pool.query(
+        `INSERT INTO submissions (user_id, task_id, code, status, score)
+        VALUES ($1, $2, $3, 'failed', 0) RETURNING *`,
+        [user_id, task_id, code]
+      );
+
+      return res.status(400).json({
+        error: testError.message || 'Решение не прошло проверку',
+        submission: sub[0],
+        xp_earned: 0,
+      });
+    }
 
     const { rows: existingCompleted } = await pool.query(
       `SELECT id FROM submissions
@@ -113,14 +169,40 @@ const getTaskById = async (req, res) => {
 
 const createTask = async (req, res) => {
   try {
-    const { lesson_id, title, description, xp_reward } = req.body;
-    if (!lesson_id || !title)
-      return res.status(400).json({ error: 'lesson_id и title обязательны' });
+        const {
+      lesson_id,
+      title,
+      description,
+      check_variable_name,
+      check_value_type,
+      check_expected_value,
+      xp_reward,
+    } = req.body;
+
+    if (!lesson_id || !title || !check_variable_name)
+      return res.status(400).json({ error: 'lesson_id, title и check_variable_name обязательны' });
 
     const { rows } = await pool.query(
-      `INSERT INTO tasks (lesson_id, title, description, xp_reward)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [lesson_id, title, description || null, xp_reward ?? 10]
+      `INSERT INTO tasks (
+        lesson_id,
+        title,
+        description,
+        check_variable_name,
+        check_value_type,
+        check_expected_value,
+        xp_reward
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *`,
+      [
+        lesson_id,
+        title,
+        description || null,
+        check_variable_name,
+        check_value_type || null,
+        check_expected_value ?? null,
+        xp_reward ?? 10,
+      ]
     );
     res.status(201).json({ task: rows[0] });
   } catch (err) {
